@@ -13,7 +13,6 @@ func init() {
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "版本显示",
-	Long:  `版本`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hugo四则运算生成器v0.1")
 	},

@@ -55,10 +55,7 @@ func Execute() error {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
 	rootCmd.Flags().StringVarP(&cfgFile, "file", "f", "", "config")
-	rootCmd.AddCommand(versionCmd)
-
 }
 
 func initConfig() {
