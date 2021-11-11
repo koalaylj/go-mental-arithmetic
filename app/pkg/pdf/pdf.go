@@ -1,4 +1,4 @@
-package main
+package pdf
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
-func createPDF() pdf.Maroto {
+func New() pdf.Maroto {
 	m := pdf.NewMaroto(consts.Portrait, consts.A4)
 	m.SetPageMargins(10, 10, 10)
 	m.SetBorder(false)
@@ -19,7 +19,7 @@ func createPDF() pdf.Maroto {
 	return m
 }
 
-func setHeader(m pdf.Maroto) {
+func SetHeader(m pdf.Maroto, row int, col int) {
 
 	m.RegisterHeader(func() {
 		m.Row(20, func() {
@@ -34,7 +34,7 @@ func setHeader(m pdf.Maroto) {
 		})
 		m.Row(16, func() {
 			m.Col(2, func() {
-				m.Text(fmt.Sprintf("题目数量:%3d", ARG_ROW*ARG_COL), props.Text{
+				m.Text(fmt.Sprintf("题目数量:%3d", row*col), props.Text{
 					Family: "CustomArial",
 					Style:  consts.Normal,
 					Align:  consts.Left,
@@ -69,7 +69,7 @@ func setHeader(m pdf.Maroto) {
 	})
 }
 
-func setFooter(m pdf.Maroto) {
+func SetFooter(m pdf.Maroto) {
 	m.RegisterFooter(func() {
 		m.Row(5, func() {
 			m.Col(12, func() {
@@ -83,9 +83,18 @@ func setFooter(m pdf.Maroto) {
 	})
 }
 
-func buildPage(m pdf.Maroto, cells [][]string) {
+func BuildPage(m pdf.Maroto, cells [][]string) {
 
-	for i := 0; i < ARG_ROW; i++ {
+	row_count := len(cells)
+	// col_count := len(cells[0])
+
+	// _, m_top, _, m_bottom := m.GetPageMargins()
+
+	// row_height := (m.GetCurrentOffset() - m_bottom - m_top) / float64(row_count)
+
+	// fmt.Println(row_height)
+
+	for i := 0; i < row_count; i++ {
 		m.Row(15, func() {
 			m.Col(3, func() {
 				m.Text(cells[i][0], props.Text{
@@ -116,12 +125,13 @@ func buildPage(m pdf.Maroto, cells [][]string) {
 				})
 			})
 		})
-
 	}
 }
 
-func save(m pdf.Maroto) {
-	file := fmt.Sprintf("./%s.pdf", time.Now().Format("2006-01-02"))
+func Export(m pdf.Maroto, path string) {
+	os.Mkdir(path, os.ModePerm)
+	file := fmt.Sprintf("%s/%s.pdf", path, time.Now().Format("2006-01-02"))
+
 	err := m.OutputFileAndClose(file)
 	if err != nil {
 		fmt.Println("Could not save PDF:", err)

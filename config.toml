@@ -1,0 +1,19 @@
+name = "hugo"
+
+# 包含的运算 加 减 乘 除
+[op]
+add = true
+sub = true
+mul = false
+div = false
+
+[difficulty]
+min = 1         # 最小的数
+max = 10        # 最大的数
+carry = false   # 是否进位
+
+[pdf]
+path = "./pdf"
+pages = 100
+col = 4 # 这个值只能是4
+row = 15
