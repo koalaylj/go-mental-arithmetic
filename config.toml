@@ -4,16 +4,15 @@ name = "hugo"
 [op]
 add = true
 sub = true
-mul = false
-div = false
+mul = false # 暂不支持
+div = false # 暂不支持
 
 [difficulty]
-min = 1         # 最小的数
-max = 10        # 最大的数
-carry = false   # 是否进位
+min = 1 # 最小的数
+max = 20 # 最大的数
+limit_add = [10, 20] #加法结果域约束(10,20]
+carry = false # 是否进位
 
 [pdf]
-path = "./pdf"
-pages = 100
-col = 4 # 这个值只能是4
-row = 15
+path = "./pdf" # pdf保存的位置
+pages = 10 # 生成页数

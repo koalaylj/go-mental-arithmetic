@@ -24,28 +24,38 @@ var (
 			pdf.SetHeader(m, arg_row, arg_col)
 			pdf.SetFooter(m)
 
-			for i := 0; i < arg_pages; i++ {
+			for i := 0; i < options.pages; i++ {
 				cells := innerText()
 				pdf.BuildPage(m, cells)
-				if i < arg_pages-1 {
+				if i < options.pages-1 {
 					m.AddPage()
 				}
 			}
 
-			pdf.Export(m, arg_path)
+			pdf.Export(m, options.path)
 		},
 	}
 )
 
 var (
-	arg_min   = 1
-	arg_max   = 10
-	arg_carry = false
-	arg_pages = 10
-	arg_path  = "./pdf"
-	arg_col   = 4
-	arg_row   = 15
-	ops       = []string{}
+	arg_col = 4
+	arg_row = 15
+
+	options = struct {
+		min        int
+		max        int
+		pages      int
+		limint_add []int
+		carry      bool
+		path       string
+		ops        []string
+	}{
+		min:        1,
+		max:        20,
+		carry:      false,
+		limint_add: []int{},
+		ops:        []string{},
+	}
 )
 
 // Execute executes the root command.
@@ -59,6 +69,7 @@ func init() {
 }
 
 func initConfig() {
+
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
@@ -78,32 +89,32 @@ func initConfig() {
 		arg_div := viper.GetBool("op.div")
 
 		if arg_add {
-			ops = append(ops, "+")
+			options.ops = append(options.ops, "+")
 		}
 
 		if arg_sub {
-			ops = append(ops, "-")
+			options.ops = append(options.ops, "-")
 		}
 
 		if arg_mul {
-			ops = append(ops, "*")
+			options.ops = append(options.ops, "*")
 		}
 
 		if arg_div {
-			ops = append(ops, "/")
+			options.ops = append(options.ops, "/")
 		}
 
-		if len(ops) == 0 {
+		if len(options.ops) == 0 {
 			panic("至少指定一种运算 add sub mul div")
 		}
 
-		arg_min = viper.GetInt("difficulty.min")
-		arg_max = viper.GetInt("difficulty.max")
-		arg_carry = viper.GetBool("difficulty.carry")
-		arg_path = viper.GetString("pdf.path")
-		arg_pages = viper.GetInt("pdf.pages")
-		arg_col = viper.GetInt("pdf.col")
-		arg_row = viper.GetInt("pdf.row")
+		options.min = viper.GetInt("difficulty.min")
+		options.max = viper.GetInt("difficulty.max")
+		options.carry = viper.GetBool("difficulty.carry")
+		options.limint_add = viper.GetIntSlice("difficulty.limit_add")
+
+		options.path = viper.GetString("pdf.path")
+		options.pages = viper.GetInt("pdf.pages")
 
 	} else {
 		fmt.Println("initConfig failed", err)
@@ -111,8 +122,8 @@ func initConfig() {
 }
 
 func randomOp(random *rand.Rand) string {
-	index := random.Intn(len(ops))
-	return ops[index]
+	index := random.Intn(len(options.ops))
+	return options.ops[index]
 }
 
 func getRandom() *rand.Rand {
@@ -140,9 +151,9 @@ func innerText() [][]string {
 
 			switch operand {
 			case "+":
-				item = op.RandomAdd(random, arg_max, arg_min)
+				item = op.RandomAdd(random, options.max, options.min, options.carry, options.limint_add)
 			case "-":
-				item = op.RandomSub(random, arg_max, arg_min)
+				item = op.RandomSub(random, options.max, options.min, options.carry)
 			}
 
 			cell := fmt.Sprintf("%2d) %s\n", no, item)

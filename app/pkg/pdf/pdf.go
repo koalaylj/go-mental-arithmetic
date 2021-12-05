@@ -24,7 +24,7 @@ func SetHeader(m pdf.Maroto, row int, col int) {
 	m.RegisterHeader(func() {
 		m.Row(20, func() {
 			m.Col(12, func() {
-				m.Text("数 学 运 算 练 习", props.Text{
+				m.Text("数 学 运 算 练 习 v2", props.Text{
 					Family: "CustomArial",
 					Style:  consts.Normal,
 					Align:  consts.Center,

@@ -5,14 +5,24 @@ import (
 	"math/rand"
 )
 
-func RandomAdd(random *rand.Rand, max int, min int) string {
+func RandomAdd(random *rand.Rand, max int, min int, carry bool, limit []int) string {
 	a := random.Intn(max) + min
 	b := random.Intn(max) + min
 
 	//a + b
 	for {
-		if a+b <= max {
-			break
+
+		if a+b > limit[0] && a+b <= limit[1] {
+			if carry {
+				break
+			} else {
+				if a > 10 || b > 10 {
+					break
+				} else {
+					a = random.Intn(max) + min
+					b = random.Intn(max) + min
+				}
+			}
 		}
 
 		if b > a {
@@ -24,18 +34,27 @@ func RandomAdd(random *rand.Rand, max int, min int) string {
 			b = random.Intn(max) + min
 		}
 	}
-
+	fmt.Printf("%2d + %2d = %2v\n", a, b, a+b)
 	return render(a, b, "+")
 }
 
-func RandomSub(random *rand.Rand, max int, min int) string {
+func RandomSub(random *rand.Rand, max int, min int, carry bool) string {
 	a := random.Intn(max) + min
 	b := random.Intn(max) + min
 
 	//a - b
 	for {
-		if a > b {
-			break
+		if a > b && a > 10 {
+			if carry {
+				break
+			} else {
+				if b > 10 || (b < 10 && a-b > 10) {
+					break
+				} else {
+					a = random.Intn(max) + min
+					b = random.Intn(max) + min
+				}
+			}
 		} else if a < b {
 			temp := b
 			b = a
@@ -46,6 +65,7 @@ func RandomSub(random *rand.Rand, max int, min int) string {
 		}
 	}
 
+	fmt.Printf("%2d - %2d = %2v\n", a, b, a-b)
 	return render(a, b, "-")
 }
 
