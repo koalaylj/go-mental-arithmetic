@@ -5,12 +5,31 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/koalaylj/go-mental-arithmetic/app/pkg/config"
 	"github.com/koalaylj/go-mental-arithmetic/app/pkg/op"
 	"github.com/koalaylj/go-mental-arithmetic/app/pkg/pdf"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+var (
+	arg_col = 4
+	arg_row = 15
+
+	options = struct {
+		add   config.OP_ADD
+		sub   config.OP_SUB
+		pages int
+		path  string
+		ops   []string
+	}{
+		add:   config.OP_ADD{},
+		sub:   config.OP_SUB{},
+		pages: 10,
+		path:  "./",
+		ops:   []string{},
+	}
+)
 var (
 	cfgFile string
 
@@ -34,27 +53,6 @@ var (
 
 			pdf.Export(m, options.path)
 		},
-	}
-)
-
-var (
-	arg_col = 4
-	arg_row = 15
-
-	options = struct {
-		min        int
-		max        int
-		pages      int
-		limint_add []int
-		carry      bool
-		path       string
-		ops        []string
-	}{
-		min:        1,
-		max:        20,
-		carry:      false,
-		limint_add: []int{},
-		ops:        []string{},
 	}
 )
 
@@ -83,38 +81,26 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 
-		arg_add := viper.GetBool("op.add")
-		arg_sub := viper.GetBool("op.sub")
-		arg_mul := viper.GetBool("op.mul")
-		arg_div := viper.GetBool("op.div")
-
-		if arg_add {
-			options.ops = append(options.ops, "+")
-		}
-
-		if arg_sub {
-			options.ops = append(options.ops, "-")
-		}
-
-		if arg_mul {
-			options.ops = append(options.ops, "*")
-		}
-
-		if arg_div {
-			options.ops = append(options.ops, "/")
-		}
+		options.ops = viper.GetStringSlice("ops")
 
 		if len(options.ops) == 0 {
-			panic("至少指定一种运算 add sub mul div")
+			panic("至少指定一种运算 + - ")
 		}
 
-		options.min = viper.GetInt("difficulty.min")
-		options.max = viper.GetInt("difficulty.max")
-		options.carry = viper.GetBool("difficulty.carry")
-		options.limint_add = viper.GetIntSlice("difficulty.limit_add")
+		options.add.Min = viper.GetInt("add.min")
+		options.add.Max = viper.GetInt("add.max")
+		options.add.Carry = viper.GetBool("add.carry")
+		options.add.Limit = viper.GetIntSlice("add.limit")
+
+		options.sub.Min = viper.GetInt("sub.min")
+		options.sub.Max = viper.GetInt("sub.max")
+		options.sub.Borrow = viper.GetBool("sub.borrow")
+		options.sub.Limit = viper.GetIntSlice("sub.limit")
 
 		options.path = viper.GetString("pdf.path")
 		options.pages = viper.GetInt("pdf.pages")
+
+		fmt.Printf("%+v", options)
 
 	} else {
 		fmt.Println("initConfig failed", err)
@@ -151,9 +137,9 @@ func innerText() [][]string {
 
 			switch operand {
 			case "+":
-				item = op.RandomAdd(random, options.max, options.min, options.carry, options.limint_add)
+				item = op.RandomAdd(random, options.add)
 			case "-":
-				item = op.RandomSub(random, options.max, options.min, options.carry)
+				item = op.RandomSub(random, options.sub)
 			}
 
 			cell := fmt.Sprintf("%2d) %s\n", no, item)

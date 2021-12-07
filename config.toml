@@ -1,17 +1,18 @@
 name = "hugo"
-
 # 包含的运算 加 减 乘 除
-[op]
-add = true
-sub = true
-mul = false # 暂不支持
-div = false # 暂不支持
+ops = ["+", "-"]
 
-[difficulty]
+[add] # a+b
+min = 4 # 最小的数
+max = 17 # 最大的数
+limit = [10, 19] #加法结果域约束(10,20]
+carry = true # 是否进位
+
+[sub] # a-b
 min = 1 # 最小的数
-max = 20 # 最大的数
-limit_add = [10, 20] #加法结果域约束(10,20]
-carry = false # 是否进位
+max = 19 # 最大的数
+limit = [0, 19] #减法结果域约束(0,19]
+borrow = false # 是否借位
 
 [pdf]
 path = "./pdf" # pdf保存的位置
