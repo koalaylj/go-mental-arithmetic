@@ -13,7 +13,7 @@ func RandomAdd(random *rand.Rand, options config.OP_ADD) string {
 
 	//a + b
 	for {
-		if a+b > options.Limit[0] && a+b <= options.Limit[1] {
+		if a+b > options.Bounds[0] && a+b <= options.Bounds[1] {
 			if options.Carry {
 				break
 			} else {
@@ -45,7 +45,7 @@ func RandomSub(random *rand.Rand, options config.OP_SUB) string {
 
 	//a - b
 	for {
-		if a > 10 && a-b > options.Limit[0] && a-b <= options.Limit[1] {
+		if a > 10 && a-b > options.Bounds[0] && a-b <= options.Bounds[1] {
 			if options.Borrow {
 				break
 			} else {

@@ -90,12 +90,12 @@ func initConfig() {
 		options.add.Min = viper.GetInt("add.min")
 		options.add.Max = viper.GetInt("add.max")
 		options.add.Carry = viper.GetBool("add.carry")
-		options.add.Limit = viper.GetIntSlice("add.limit")
+		options.add.Bounds = viper.GetIntSlice("add.bounds")
 
 		options.sub.Min = viper.GetInt("sub.min")
 		options.sub.Max = viper.GetInt("sub.max")
 		options.sub.Borrow = viper.GetBool("sub.borrow")
-		options.sub.Limit = viper.GetIntSlice("sub.limit")
+		options.sub.Bounds = viper.GetIntSlice("sub.bounds")
 
 		options.path = viper.GetString("pdf.path")
 		options.pages = viper.GetInt("pdf.pages")
